@@ -17,7 +17,7 @@ People Pictogram Maker helps designers visualize people-based data—counts, rat
 - **Flexible layouts** - Configure up to 100 icons with 1-25 rows
 - **Randomized or fixed patterns** - Choose between randomized distribution or clustered highlights
 - **Adjustable sizing** - Icon sizes from 16px to 60px
-- **WCAG compliant** - Meets accessibility standards for use of color (WCAG 2.2 SC 1.4.1)
+- **WCAG conformant** - Meets accessibility standards for use of color (WCAG 2.2 SC 1.4.1)
 
 ---
 
@@ -25,7 +25,7 @@ People Pictogram Maker helps designers visualize people-based data—counts, rat
 
 Install from the Figma Community page (link available after plugin submission).
 
-1. Visit the plugin page and select "Open in…"
+1. Visit the plugin page and select "Open in..."
 2. In your Figma Design, FigJam, or Figma Slides file, select "Save"
 3. Access the plugin: Right-click → Plugins → People Pictogram Maker
 
@@ -100,7 +100,7 @@ Plugins → Development → Reload plugin
 
 ## Technical Details
 
-- **Plugin ID:** [To be added after Figma Community submission]
+- **Plugin ID:** 1571380823289911462
 - **Plugin Name:** People Pictogram Maker
 - **TypeScript:** ES2017 target
 - **UI Architecture:** Inline CSS/JS in ui.html (Figma requirement)
@@ -113,7 +113,7 @@ Plugins → Development → Reload plugin
 This plugin is designed with accessibility at its core:
 
 - **Shape differentiation**: Uses solid and outlined icons, not just color
-- **WCAG 2.2 SC 1.4.1 compliant**: Meets "Use of Color" success criterion
+- **WCAG 2.2 SC 1.4.1 conformant**: Meets "Use of Color" success criterion
 - **Universal design**: Generic person icon avoids implying gender, culture, ability, or other traits
 - **Flexible theming**: Dark and light modes for different contrast needs
 
@@ -143,7 +143,7 @@ Created and maintained by Linda Nakasone
 **Core functionalities**
 - Dark and light modes
 - Input for total and highlighted people
-- Adjustable number of rows (1–25)
+- Adjustable number of rows (1-25)
 - Icon sizes from 16px to 60px
 - Randomize or cluster highlighted icons
 

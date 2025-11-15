@@ -1,6 +1,6 @@
 {
   "name": "People Pictogram Maker",
-  "id": "people-pictogram-maker",
+  "id": "1571380823289911462",
   "api": "1.0.0",
   "main": "code.js",
   "capabilities": [],
@@ -9,5 +9,9 @@
     "figma",
     "figjam"
   ],
-  "ui": "ui.html"
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  },
+  "documentAccess": "dynamic-page"
 }
