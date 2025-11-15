@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 16px;
+      color: #1E1E1E;
+      background: #FFFFFF;
+      width: 400px;
+      height: 600px;
+      overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: #01243E;
+      color: #F3F3F3;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      border-bottom: 1px solid #D9D9D9;
+      padding: 8px 8px 0 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+    }
+
+    .tab {
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #767676;
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      font-weight: 600;
+      color: #0070C0;
+      border-bottom-color: #0070C0;
+    }
+
+    body.dark-mode .tab {
+      color: #F3F3F3;
+    }
+
+    body.dark-mode .tab.active {
+      color: #D0CF94;
+      border-bottom-color: #D0CF94;
+    }
+
+    /* Content areas */
+    .tab-content {
+      display: none;
+      padding: 16px 0;
+      height: 512px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+      padding-left: 16px;
+    }
+
+    /* Theme toggle */
+    .theme-toggle-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 368px;
+    }
+
+    .theme-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1E1E1E;
+    }
+
+    body.dark-mode .theme-label {
+      color: #F3F3F3;
+    }
+
+    .theme-buttons {
+      display: flex;
+      border: 1px solid #757575;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .theme-buttons:focus-within {
+      outline: 2px solid #0070C0;
+      outline-offset: 2px;
+    }
+
+    body.dark-mode .theme-buttons:focus-within {
+      outline-color: #58A6FF;
+    }
+
+    .theme-btn {
+      padding: 8px;
+      background: #FFFFFF;
+      border: none;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #1E1E1E;
+      white-space: nowrap;
+      height: 32px;
+      min-width: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-btn:focus-visible {
+      outline: none;
+    }
+
+    body.dark-mode .theme-btn {
+      background: #01243E;
+      color: #F3F3F3;
+    }
+
+    .theme-btn:first-child {
+      border-right: 1px solid #757575;
+    }
+
+    .theme-btn.selected {
+      background-color: #0070C0;
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    body.dark-mode .theme-btn.selected {
+      background-color: #0070C0;
+      color: #FFFFFF;
+    }
+
+    /* Input groups */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .label-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .label-with-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .input-with-help {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .number-input:focus-visible,
+    .select-input:focus-visible,
+    input[type="checkbox"]:focus-visible,
+    .tab:focus-visible,
+    .theme-btn:focus-visible,
+    .btn-primary:focus-visible {
+      outline: 2px solid #0070C0;
+      outline-offset: 2px;
+    }
+
+    body.dark-mode .number-input:focus-visible,
+    body.dark-mode .select-input:focus-visible,
+    body.dark-mode input[type="checkbox"]:focus-visible,
+    body.dark-mode .tab:focus-visible,
+    body.dark-mode .theme-btn:focus-visible,
+    body.dark-mode .btn-primary:focus-visible {
+      outline-color: #58A6FF;
+    }
+
+    .number-input {
+      width: 100px;
+      height: 40px;
+      padding: 4px 16px;
+      font-size: 16px;
+      border: 1px solid #757575;
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: #1E1E1E;
+      text-align: left;
+    }
+
+    .number-input.error {
+      border: 2px solid #C0005A;
+    }
+
+    body.dark-mode .number-input.error {
+      border: 2px solid #FF7AB8;
+    }
+
+    .select-input {
+      width: 95px;
+      height: 40px;
+      padding: 4px 16px;
+      font-size: 16px;
+      border: 1px solid #757575;
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: #1E1E1E;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='9' viewBox='0 0 16 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6.99195 8.66303C7.62189 9.14587 8.54681 9.10837 9.13175 8.55989L15.5312 2.55953C15.9911 2.12825 16.1261 1.48603 15.8761 0.923494C15.6261 0.36096 15.0462 0 14.4013 0H1.60245C0.957514 0 0.372568 0.365646 0.122591 0.928181C-0.127385 1.49072 0.0126015 2.13294 0.472559 2.55953L6.87196 8.55989L6.99195 8.66303Z' fill='%231E1E1E'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 32px;
+    }
+
+    body.dark-mode .number-input {
+      background: #2C2C2C;
+      color: #F3F3F3;
+    }
+
+    body.dark-mode .select-input {
+      background-color: #2C2C2C;
+      color: #F3F3F3;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='9' viewBox='0 0 16 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6.99195 8.66303C7.62189 9.14587 8.54681 9.10837 9.13175 8.55989L15.5312 2.55953C15.9911 2.12825 16.1261 1.48603 15.8761 0.923494C15.6261 0.36096 15.0462 0 14.4013 0H1.60245C0.957514 0 0.372568 0.365646 0.122591 0.928181C-0.127385 1.49072 0.0126015 2.13294 0.472559 2.55953L6.87196 8.55989L6.99195 8.66303Z' fill='%23F3F3F3'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .help-text {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .help-text-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Shared error message styles */
+    .error-message-inline,
+    .error-message-block {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      position: absolute;
+      color: #C0005A;
+    }
+
+    body.dark-mode .error-message-inline,
+    body.dark-mode .error-message-block {
+      color: #FF7AB8;
+    }
+
+    .error-message-inline.visible,
+    .error-message-block.visible {
+      display: flex;
+    }
+
+    .error-message-inline svg,
+    .error-message-block svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Inline error - below helper text */
+    .error-message-inline {
+      top: 20px;
+      left: 0;
+      align-items: flex-start;
+    }
+
+    /* Block error - below input */
+    .error-message-block {
+      top: 100%;
+      left: 0;
+      margin-top: 6px;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .error-text {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.2857;
+      color: inherit;
+    }
+
+    .error-message-block .error-text {
+      font-size: 12px;
+      line-height: 1.33;
+    }
+
+    /* Rows input container */
+    .rows-input-container {
+      position: relative;
+    }
+
+    /* Two column layout */
+    .two-columns {
+      display: flex;
+      gap: 44px;
+    }
+
+    .two-columns .input-group {
+      flex: 0 0 auto;
+    }
+
+    .two-columns .input-group:first-child .number-input {
+      width: 100px;
+      height: 40px;
+    }
+
+    .two-columns .input-group:last-child .select-input {
+      width: 95px;
+      height: 40px;
+    }
+
+    /* Checkbox */
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 368px;
+    }
+
+    .checkbox-field input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #757575;
+      border-radius: 4px;
+      cursor: pointer;
+      appearance: none;
+      background: #FFFFFF;
+      position: relative;
+    }
+
+    .checkbox-field input[type="checkbox"]:checked {
+      background-color: #0070C0;
+      border-color: #0070C0;
+      background-image: url("data:image/svg+xml,%3Csvg width='13' height='9' viewBox='0 0 13 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.4667 0.799988L4.13334 8.13332L0.800003 4.79999' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    body.dark-mode .checkbox-field input[type="checkbox"] {
+      background: #01243E;
+      border-color: #D0CF94;
+    }
+
+    body.dark-mode .checkbox-field input[type="checkbox"]:checked {
+      background-color: #D0CF94;
+      border-color: #D0CF94;
+      background-image: url("data:image/svg+xml,%3Csvg width='13' height='9' viewBox='0 0 13 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.4667 0.799988L4.13334 8.13332L0.800003 4.79999' stroke='%232C2C2C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .checkbox-field label {
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Preview tab */
+    #preview-tab {
+      gap: 24px;
+    }
+
+    .preview-info {
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .preview-output {
+      display: flex;
+      flex-direction: column;
+      width: 360px;
+      align-content: flex-start;
+    }
+
+    .preview-icon {
+      display: inline-block;
+    }
+
+    .preview-icon svg {
+      display: block;
+    }
+
+    /* Footer button */
+    .sticky-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      border-top: 1px solid #D9D9D9;
+      background: #FFFFFF;
+    }
+
+    body.dark-mode .sticky-footer {
+      background: #2C2C2C;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 22px;
+      color: #F3F3F3;
+      background: #0070C0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #0060A8;
+    }
+
+    .btn-primary:active {
+      background: #00508C;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <button class="tab active" data-tab="design">Design</button>
+      <button class="tab" data-tab="preview">Preview</button>
+    </div>
+  </div>
+
+  <!-- Design Tab Content -->
+  <div id="design-tab" class="tab-content active">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-section">
+      <span class="theme-label" id="theme-label">Theme</span>
+      <div class="theme-buttons" role="radiogroup" aria-labelledby="theme-label">
+        <button class="theme-btn selected" data-theme="light" role="radio" aria-checked="true" tabindex="0">☀️ Light mode</button>
+        <button class="theme-btn" data-theme="dark" role="radio" aria-checked="false" tabindex="-1">🌙 Dark mode</button>
+      </div>
+    </div>
+
+    <!-- Highlighted -->
+    <div class="input-group">
+      <label for="highlightCount" class="label-with-icon">
+        <span>Highlighted</span>
+        <svg width="24" height="24" viewBox="0 0 14 22" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="people">
+          <title>people</title>
+          <path d="M9.00012 2.1C9.00012 0.94125 8.05887 0 6.90012 0C5.74137 0 4.80012 0.94125 4.80012 2.1C4.80012 3.25875 5.74137 4.2 6.90012 4.2C8.05887 4.2 9.00012 3.25875 9.00012 2.1ZM9.90012 10.0763L11.6364 12.4163C12.0301 12.9488 12.7839 13.0613 13.3164 12.6638C13.8489 12.2663 13.9614 11.5163 13.5639 10.9838L10.9201 7.42125C9.97512 6.15 8.48637 5.4 6.90012 5.4C5.31387 5.4 3.82512 6.15 2.88012 7.42125L0.23637 10.9838C-0.15738 11.5163 -0.0486301 12.2663 0.48387 12.6638C1.01637 13.0613 1.76637 12.9488 2.16387 12.4163L3.90012 10.0763V20.4C3.90012 21.0638 4.43637 21.6 5.10012 21.6C5.76387 21.6 6.30012 21.0638 6.30012 20.4V14.4C6.30012 14.07 6.57012 13.8 6.90012 13.8C7.23012 13.8 7.50012 14.07 7.50012 14.4V20.4C7.50012 21.0638 8.03637 21.6 8.70012 21.6C9.36387 21.6 9.90012 21.0638 9.90012 20.4V10.0763Z"/>
+        </svg>
+      </label>
+      <div class="input-with-help">
+        <input 
+          type="number" 
+          id="highlightCount" 
+          class="number-input" 
+          value="1" 
+          min="0" 
+          max="100"
+          aria-describedby="highlightHelp highlightError"
+          aria-invalid="false">
+        <div class="help-text-wrapper">
+          <span class="help-text" id="highlightHelp">Cannot exceed <strong>Total</strong> count</span>
+          <div id="highlightError" class="error-message-inline" role="alert" aria-live="polite">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g clip-path="url(#clip0_14_334)">
+                <path d="M11.8984 0.5C12.2976 0.500034 12.6781 0.656994 12.96 0.94043L17.0566 5.03906H17.0576C17.3435 5.32075 17.5 5.70516 17.5 6.10156V11.8984C17.5 12.2987 17.3395 12.6781 17.0596 12.958L12.9619 17.0566C12.6802 17.3428 12.296 17.5 11.8994 17.5H6.10156C5.70396 17.5 5.32183 17.3433 5.04004 17.0615L0.943359 12.9619C0.657239 12.6802 0.5 12.296 0.5 11.8994V6.10156L0.506836 5.95312C0.540749 5.60848 0.692757 5.28586 0.941406 5.03906L5.03906 0.943359V0.942383C5.32075 0.656459 5.70516 0.500034 6.10156 0.5H11.8984ZM9 13.499C8.72439 13.499 8.5 13.7234 8.5 13.999C8.50001 14.2746 8.7244 14.499 9 14.499C9.2756 14.499 9.49999 14.2746 9.5 13.999C9.5 13.7234 9.27561 13.499 9 13.499ZM9 3.49902C8.72439 3.49902 8.5 3.72439 8.5 4V9.99902C8.5 10.2746 8.72439 10.499 9 10.499C9.27561 10.499 9.5 10.2746 9.5 9.99902V4C9.5 3.72439 9.27561 3.49902 9 3.49902Z" fill="#C0005A" stroke="white"/>
+              </g>
+              <defs>
+                <clipPath id="clip0_14_334">
+                  <rect width="18" height="18" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+            <span class="error-text" id="highlightErrorText">Decrease highlighted number to <span id="maxHighlight"></span> or less</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="input-group">
+      <label for="totalCount" class="label-with-icon">
+        <span>Total</span>
+        <svg width="24" height="24" viewBox="0 0 14 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="people">
+          <title>people</title>
+          <path d="M6.90039 5.7998C8.35983 5.79989 9.72904 6.49038 10.5986 7.66016V7.65918L13.2422 11.2217L13.2432 11.2227C13.5071 11.5763 13.4342 12.0761 13.0771 12.3428C12.7226 12.6075 12.2202 12.5331 11.958 12.1787V12.1777L10.2217 9.83789C10.1189 9.69932 9.93825 9.64215 9.77441 9.69629C9.61067 9.75046 9.50003 9.9037 9.5 10.0762V20.4004C9.49979 20.843 9.14287 21.2002 8.7002 21.2002C8.25749 21.2002 7.9006 20.843 7.90039 20.4004V14.4004C7.90039 13.8496 7.45118 13.4005 6.90039 13.4004C6.34948 13.4004 5.90039 13.8495 5.90039 14.4004V20.4004C5.90018 20.8429 5.54308 21.1999 5.10059 21.2002C4.65788 21.2002 4.30001 20.843 4.2998 20.4004V10.0762C4.29977 9.90365 4.1892 9.75042 4.02539 9.69629C3.86167 9.64231 3.68188 9.69947 3.5791 9.83789L1.84375 12.1768C1.5771 12.534 1.07733 12.6067 0.723633 12.3428C0.390343 12.094 0.30515 11.6393 0.512695 11.29L0.557617 11.2217L3.2002 7.65918L3.20117 7.66016C4.07082 6.49028 5.44083 5.7998 6.90039 5.7998ZM6.90039 0.400391C7.83797 0.400537 8.60037 1.16204 8.60059 2.09961C8.60059 3.03736 7.8381 3.79966 6.90039 3.7998C5.96255 3.7998 5.2002 3.03745 5.2002 2.09961C5.20041 1.16195 5.96268 0.400391 6.90039 0.400391Z" stroke="currentColor" stroke-width="0.8" stroke-linejoin="round"/>
+        </svg>
+      </label>
+      <div class="input-with-help">
+        <input 
+          type="number" 
+          id="totalCount" 
+          class="number-input" 
+          value="100" 
+          min="1" 
+          max="100"
+          aria-describedby="totalHelp">
+        <span class="help-text" id="totalHelp">Maximum 100,<br>not less than Highlighted</span>
+      </div>
+    </div>
+
+    <!-- Rows and Pictogram Size -->
+    <div class="two-columns">
+      <div class="input-group">
+        <label class="label-with-icon">Rows <span style="font-weight: 400;">(1 to 25)</span></label>
+        <div class="rows-input-container">
+          <input 
+            type="number" 
+            id="rows" 
+            class="number-input" 
+            value="10" 
+            min="1" 
+            max="25"
+            aria-describedby="rowsError"
+            aria-invalid="false">
+          <div id="rowsError" class="error-message-block" role="alert" aria-live="polite">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g clip-path="url(#clip0_rows_error)">
+                <path d="M11.8984 0.5C12.2976 0.500034 12.6781 0.656994 12.96 0.94043L17.0566 5.03906H17.0576C17.3435 5.32075 17.5 5.70516 17.5 6.10156V11.8984C17.5 12.2987 17.3395 12.6781 17.0596 12.958L12.9619 17.0566C12.6802 17.3428 12.296 17.5 11.8994 17.5H6.10156C5.70396 17.5 5.32183 17.3433 5.04004 17.0615L0.943359 12.9619C0.657239 12.6802 0.5 12.296 0.5 11.8994V6.10156L0.506836 5.95312C0.540749 5.60848 0.692757 5.28586 0.941406 5.03906L5.03906 0.943359V0.942383C5.32075 0.656459 5.70516 0.500034 6.10156 0.5H11.8984ZM9 13.499C8.72439 13.499 8.5 13.7234 8.5 13.999C8.50001 14.2746 8.7244 14.499 9 14.499C9.2756 14.499 9.49999 14.2746 9.5 13.999C9.5 13.7234 9.27561 13.499 9 13.499ZM9 3.49902C8.72439 3.49902 8.5 3.72439 8.5 4V9.99902C8.5 10.2746 8.72439 10.499 9 10.499C9.27561 10.499 9.5 10.2746 9.5 9.99902V4C9.5 3.72439 9.27561 3.49902 9 3.49902Z" fill="#C0005A" stroke="white"/>
+              </g>
+              <defs>
+                <clipPath id="clip0_rows_error">
+                  <rect width="18" height="18" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+            <span class="error-text">Decrease rows to <span id="maxRows"></span> or less</span>
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="label-with-icon">Pictogram size</label>
+        <select id="iconSize" class="select-input">
+          <option value="16">16px</option>
+          <option value="24" selected>24px</option>
+          <option value="36">36px</option>
+          <option value="44">44px</option>
+          <option value="60">60px</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Checkbox -->
+    <div class="checkbox-field">
+      <input type="checkbox" id="randomize" checked>
+      <label for="randomize">Randomize highlighted icons</label>
+    </div>
+  </div>
+
+  <!-- Preview Tab Content -->
+  <div id="preview-tab" class="tab-content">
+    <div class="preview-info">
+      <span id="preview-text">1 highlighted out of 100<br>10 rows<br>Pictogram size: 24px (preview true to size)</span>
+    </div>
+    <div class="preview-output" id="preview-output" role="img" aria-label="1 highlighted out of 100 people">
+      <!-- Preview will be generated here -->
+    </div>
+  </div>
+
+  <!-- Sticky Footer -->
+  <div class="sticky-footer">
+    <button class="btn-primary" id="create">Make pictogram</button>
+  </div>
+
+  <script>
+    // DESIGN TOKENS
+    const TOKENS = {
+      colors: {
+        light: {
+          icon: '#01243E',
+          background: '#FFFFFF',
+          text: '#1E1E1E'
+        },
+        dark: {
+          icon: '#F3F3F3',
+          background: '#01243E',
+          text: '#F3F3F3'
+        }
+      },
+      spacing: {
+        horizontal: 8,  // Horizontal space between icons (always 8px)
+        vertical: {     // Vertical space between rows based on icon size
+          16: 8,
+          24: 12,
+          36: 18,
+          44: 22,
+          60: 16
+        },
+        gridGap: 44,     // Gap between form elements
+        padding: 16      // Standard padding
+      }
+    };
+
+    // Theme toggle with radio group behavior
+    const body = document.body;
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    
+    function selectTheme(btn) {
+      const theme = btn.dataset.theme;
+      
+      // Update visual state
+      themeButtons.forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-checked', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+      
+      btn.classList.add('selected');
+      btn.setAttribute('aria-checked', 'true');
+      btn.setAttribute('tabindex', '0');
+      btn.focus();
+      
+      // Apply theme
+      if (theme === 'dark') {
+        body.classList.add('dark-mode');
+      } else {
+        body.classList.remove('dark-mode');
+      }
+    }
+    
+    themeButtons.forEach(btn => {
+      // Click handler
+      btn.addEventListener('click', () => {
+        selectTheme(btn);
+      });
+      
+      // Arrow key navigation
+      btn.addEventListener('keydown', (e) => {
+        let index = Array.from(themeButtons).indexOf(btn);
+        
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          index = (index + 1) % themeButtons.length;
+          selectTheme(themeButtons[index]);
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          index = (index - 1 + themeButtons.length) % themeButtons.length;
+          selectTheme(themeButtons[index]);
+        }
+      });
+    });
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `${tabName}-tab`) {
+            content.classList.add('active');
+          }
+        });
+        
+        if (tabName === 'preview') {
+          updatePreview();
+        }
+      });
+    });
+
+    // Update preview text and render pictogram
+    function updatePreview() {
+      const highlighted = parseInt(document.getElementById('highlightCount').value);
+      const total = parseInt(document.getElementById('totalCount').value);
+      const rows = parseInt(document.getElementById('rows').value);
+      const size = parseInt(document.getElementById('iconSize').value);
+      const randomize = document.getElementById('randomize').checked;
+      
+      // Cap highlighted at total for preview display
+      const displayHighlighted = Math.min(highlighted, total);
+      
+      // Calculate actual rows that will be used (feasible rows)
+      const actualRows = Math.min(rows, total);
+      
+      // Calculate actual dimensions with separate horizontal and vertical spacing
+      const cols = Math.ceil(total / actualRows);
+      const horizontalSpacing = TOKENS.spacing.horizontal;
+      const verticalSpacing = TOKENS.spacing.vertical[size] || TOKENS.spacing.horizontal;
+      const totalWidth = cols * size + (cols - 1) * horizontalSpacing;
+      const totalHeight = actualRows * size + (actualRows - 1) * verticalSpacing;
+      
+      // Available space (360px width with some padding)
+      const maxWidth = 360;
+      const maxHeight = 400; // Approximate available height
+      
+      // Check if we need to scale
+      let scale = 1;
+      let isTrueSize = true;
+      if (totalWidth > maxWidth || totalHeight > maxHeight) {
+        const scaleWidth = maxWidth / totalWidth;
+        const scaleHeight = maxHeight / totalHeight;
+        scale = Math.min(scaleWidth, scaleHeight);
+        isTrueSize = false;
+      }
+      
+      const scaledSize = size * scale;
+      const scaledHorizontalSpacing = horizontalSpacing * scale;
+      const scaledVerticalSpacing = verticalSpacing * scale;
+      
+      const rowText = actualRows === 1 ? 'row' : 'rows';
+      
+      // Update text with proper person/people grammar and bold numbers
+      const sizeText = isTrueSize ? 'preview true to size' : 'preview not true to size';
+      const peopleText = total === 1 ? 'person' : 'people';
+      
+      // Show adjusted row count if user selected more rows than needed
+      let rowsDisplayText = `${actualRows} ${rowText}`;
+      if (rows > total) {
+        rowsDisplayText += ` (but you've selected ${rows})`;
+      }
+      
+      document.getElementById('preview-text').innerHTML = 
+        `<strong>${displayHighlighted}</strong> highlighted out of <strong>${total}</strong> ${peopleText}<br>${rowsDisplayText}<br>Pictogram size: ${size}px (${sizeText})`;
+      
+      // Generate preview pictogram
+      const previewOutput = document.getElementById('preview-output');
+      previewOutput.innerHTML = '';
+      previewOutput.style.gap = `${scaledVerticalSpacing}px`;
+      
+      // Update aria-label for screen readers
+      previewOutput.setAttribute('aria-label', `${displayHighlighted} highlighted out of ${total} ${peopleText}`);
+      
+      // Determine which icons to highlight (use displayHighlighted instead of highlighted)
+      let highlightedIndices = [];
+      if (randomize) {
+        const allIndices = Array.from({ length: total }, (_, i) => i);
+        for (let i = allIndices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [allIndices[i], allIndices[j]] = [allIndices[j], allIndices[i]];
+        }
+        highlightedIndices = allIndices.slice(0, displayHighlighted);
+      } else {
+        highlightedIndices = Array.from({ length: displayHighlighted }, (_, i) => i);
+      }
+      
+      // Use same color for all icons - from design tokens
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      const color = isDarkMode ? TOKENS.colors.dark.icon : TOKENS.colors.light.icon;
+      
+      // Create icons in a grid layout with proper row structure
+      let iconIndex = 0;
+      for (let row = 0; row < actualRows; row++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.style.display = 'flex';
+        rowDiv.style.gap = `${scaledHorizontalSpacing}px`;  // Use horizontal spacing for columns
+        
+        for (let col = 0; col < cols; col++) {
+          if (iconIndex >= total) break;
+          
+          const isHighlighted = highlightedIndices.includes(iconIndex);
+          
+          const iconWrapper = document.createElement('span');
+          iconWrapper.className = 'preview-icon';
+          
+          if (isHighlighted) {
+            // Solid icon for highlighted
+            iconWrapper.innerHTML = `
+              <svg width="${scaledSize}" height="${scaledSize}" viewBox="0 0 14 22" fill="${color}" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.00012 2.1C9.00012 0.94125 8.05887 0 6.90012 0C5.74137 0 4.80012 0.94125 4.80012 2.1C4.80012 3.25875 5.74137 4.2 6.90012 4.2C8.05887 4.2 9.00012 3.25875 9.00012 2.1ZM9.90012 10.0763L11.6364 12.4163C12.0301 12.9488 12.7839 13.0613 13.3164 12.6638C13.8489 12.2663 13.9614 11.5163 13.5639 10.9838L10.9201 7.42125C9.97512 6.15 8.48637 5.4 6.90012 5.4C5.31387 5.4 3.82512 6.15 2.88012 7.42125L0.23637 10.9838C-0.15738 11.5163 -0.0486301 12.2663 0.48387 12.6638C1.01637 13.0613 1.76637 12.9488 2.16387 12.4163L3.90012 10.0763V20.4C3.90012 21.0638 4.43637 21.6 5.10012 21.6C5.76387 21.6 6.30012 21.0638 6.30012 20.4V14.4C6.30012 14.07 6.57012 13.8 6.90012 13.8C7.23012 13.8 7.50012 14.07 7.50012 14.4V20.4C7.50012 21.0638 8.03637 21.6 8.70012 21.6C9.36387 21.6 9.90012 21.0638 9.90012 20.4V10.0763Z"/>
+              </svg>
+            `;
+          } else {
+            // Outline icon for non-highlighted
+            iconWrapper.innerHTML = `
+              <svg width="${scaledSize}" height="${scaledSize}" viewBox="0 0 14 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.90039 5.7998C8.35983 5.79989 9.72904 6.49038 10.5986 7.66016V7.65918L13.2422 11.2217L13.2432 11.2227C13.5071 11.5763 13.4342 12.0761 13.0771 12.3428C12.7226 12.6075 12.2202 12.5331 11.958 12.1787V12.1777L10.2217 9.83789C10.1189 9.69932 9.93825 9.64215 9.77441 9.69629C9.61067 9.75046 9.50003 9.9037 9.5 10.0762V20.4004C9.49979 20.843 9.14287 21.2002 8.7002 21.2002C8.25749 21.2002 7.9006 20.843 7.90039 20.4004V14.4004C7.90039 13.8496 7.45118 13.4005 6.90039 13.4004C6.34948 13.4004 5.90039 13.8495 5.90039 14.4004V20.4004C5.90018 20.8429 5.54308 21.1999 5.10059 21.2002C4.65788 21.2002 4.30001 20.843 4.2998 20.4004V10.0762C4.29977 9.90365 4.1892 9.75042 4.02539 9.69629C3.86167 9.64231 3.68188 9.69947 3.5791 9.83789L1.84375 12.1768C1.5771 12.534 1.07733 12.6067 0.723633 12.3428C0.390343 12.094 0.30515 11.6393 0.512695 11.29L0.557617 11.2217L3.2002 7.65918L3.20117 7.66016C4.07082 6.49028 5.44083 5.7998 6.90039 5.7998ZM6.90039 0.400391C7.83797 0.400537 8.60037 1.16204 8.60059 2.09961C8.60059 3.03736 7.8381 3.79966 6.90039 3.7998C5.96255 3.7998 5.2002 3.03745 5.2002 2.09961C5.20041 1.16195 5.96268 0.400391 6.90039 0.400391Z" stroke="${color}" stroke-width="0.8" stroke-linejoin="round"/>
+              </svg>
+            `;
+          }
+          rowDiv.appendChild(iconWrapper);
+          iconIndex++;
+        }
+        
+        if (rowDiv.children.length > 0) {
+          previewOutput.appendChild(rowDiv);
+        }
+        
+        if (iconIndex >= total) break;
+      }
+    }
+
+    // Helper function to convert hex color to RGB object
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16) / 255,
+        g: parseInt(result[2], 16) / 255,
+        b: parseInt(result[3], 16) / 255
+      } : { r: 0, g: 0, b: 0 };
+    }
+
+    // Create button click handler
+    document.getElementById('create').addEventListener('click', () => {
+      const totalCount = parseInt(document.getElementById('totalCount').value);
+      const highlightCount = parseInt(document.getElementById('highlightCount').value);
+      const rows = parseInt(document.getElementById('rows').value);
+      const iconSize = parseInt(document.getElementById('iconSize').value);
+      const randomize = document.getElementById('randomize').checked;
+      
+      // Cap highlighted count at total (same as button text and preview)
+      const actualHighlightCount = Math.min(highlightCount, totalCount);
+      
+      // Use corrected row count if rows exceeds total
+      const actualRows = Math.min(rows, totalCount);
+      
+      // Calculate cols from total and actualRows
+      const cols = Math.ceil(totalCount / actualRows);
+      const horizontalSpacing = TOKENS.spacing.horizontal;
+      const verticalSpacing = TOKENS.spacing.vertical[iconSize] || TOKENS.spacing.horizontal;
+      
+      // Use theme-aware colors from design tokens
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      const color = isDarkMode ? TOKENS.colors.dark.icon : TOKENS.colors.light.icon;
+      const iconColor = hexToRgb(color);
+      const highlightColor = hexToRgb(color);
+
+      parent.postMessage({
+        pluginMessage: {
+          type: 'create-pictogram',
+          totalCount,
+          highlightCount: actualHighlightCount,
+          rows: actualRows,
+          cols,
+          iconSize,
+          horizontalSpacing,
+          verticalSpacing,
+          iconColor,
+          highlightColor,
+          randomize
+        }
+      }, '*');
+    });
+
+    // Listen for messages from the plugin code
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage;
+      if (msg.type === 'pictogram-created') {
+        console.log('Pictogram created successfully!');
+      }
+    };
+
+    // Update button text to show correct values
+    function updateButtonText() {
+      const highlighted = parseInt(document.getElementById('highlightCount').value) || 0;
+      const total = parseInt(document.getElementById('totalCount').value) || 1;
+      const displayHighlighted = Math.min(highlighted, total);
+      const peopleText = total === 1 ? 'person' : 'people';
+      
+      document.getElementById('create').innerHTML = 
+        `Make pictogram showing<br>${displayHighlighted} of ${total} ${peopleText} highlighted`;
+    }
+
+    // Generic validation function
+    function validateInput(inputId, maxId, errorId, maxValueId) {
+      const input = document.getElementById(inputId);
+      const maxInput = document.getElementById(maxId);
+      const inputValue = parseInt(input.value) || (inputId === 'highlightCount' ? 0 : 1);
+      const maxValue = parseInt(maxInput.value) || 1;
+      const errorContainer = document.getElementById(errorId);
+      const maxSpan = document.getElementById(maxValueId);
+
+      if (inputValue > maxValue) {
+        input.classList.add('error');
+        input.setAttribute('aria-invalid', 'true');
+        errorContainer.classList.add('visible');
+        maxSpan.textContent = maxValue;
+        return false;
+      } else {
+        input.classList.remove('error');
+        input.setAttribute('aria-invalid', 'false');
+        errorContainer.classList.remove('visible');
+        return true;
+      }
+    }
+
+    // Validation wrapper functions
+    function validateHighlightedCount() {
+      return validateInput('highlightCount', 'totalCount', 'highlightError', 'maxHighlight');
+    }
+
+    function validateRowCount() {
+      return validateInput('rows', 'totalCount', 'rowsError', 'maxRows');
+    }
+
+    // Generic number input handler
+    function handleNumberInput(inputId, min, max) {
+      const input = document.getElementById(inputId);
+      
+      input.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        
+        let value = parseInt(e.target.value);
+        if (e.target.value !== '') {
+          if (value > max) e.target.value = max;
+          else if (value < min) e.target.value = min;
+        }
+        
+        if (inputId === 'highlightCount' || inputId === 'totalCount') {
+          validateHighlightedCount();
+          updateButtonText();
+        }
+        if (inputId === 'totalCount' || inputId === 'rows') {
+          validateRowCount();
+        }
+        updatePreview();
+      });
+      
+      input.addEventListener('blur', (e) => {
+        const currentValue = parseInt(e.target.value);
+        if (e.target.value === '' || isNaN(currentValue) || currentValue < min) {
+          e.target.value = min;
+          if (inputId === 'highlightCount' || inputId === 'totalCount') {
+            validateHighlightedCount();
+            updateButtonText();
+          }
+          if (inputId === 'totalCount' || inputId === 'rows') {
+            validateRowCount();
+          }
+          updatePreview();
+        }
+      });
+    }
+
+    // Setup input handlers
+    handleNumberInput('highlightCount', 0, 100);
+    handleNumberInput('totalCount', 1, 100);
+    handleNumberInput('rows', 1, 25);
+    document.getElementById('iconSize').addEventListener('change', updatePreview);
+    document.getElementById('randomize').addEventListener('change', updatePreview);
+
+    // Initialize preview, validation, and button text on load
+    validateHighlightedCount();
+    validateRowCount();
+    updateButtonText();
+    updatePreview();
+  </script>
+</body>
+</html>
