@@ -23,7 +23,7 @@ People Pictogram Maker helps designers visualize people-based data—counts, rat
 
 ## Installation
 
-Install from the Figma Community page (link available after plugin submission).
+Install from the [Figma Community page](https://www.figma.com/community/plugin/1571380823289911462/people-pictogram-maker).
 
 1. Visit the plugin page and select "Open in..."
 2. In your Figma Design, FigJam, or Figma Slides file, select "Save"
